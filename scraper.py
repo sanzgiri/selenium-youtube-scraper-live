@@ -1,6 +1,7 @@
 """This file runs on Replit"""
 
 import smtplib
+import ssl
 import os
 import json
 import pandas as pd
@@ -48,12 +49,10 @@ def parse_video(video):
 
 def send_email(body):
   try:
-    server_ssl = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-    server_ssl.ehlo()   
-
-    SENDER_EMAIL = 'sendsometrends@gmail.com'
-    RECEIVER_EMAIL = 'sendsometrends@gmail.com'
-    SENDER_PASSWORD = os.environ['GMAIL_PASSWORD']
+ 
+    SENDER_EMAIL = 'sanzgiri@hotmail.com'
+    RECEIVER_EMAIL = 'sanzgiri@gmail.com'
+    SENDER_PASSWORD = os.environ['HOTMAIL_PASSWORD']
     
     subject = 'YouTube Trending Videos'
 
@@ -65,9 +64,14 @@ def send_email(body):
     {body}
     """
 
-    server_ssl.login(SENDER_EMAIL, SENDER_PASSWORD)
-    server_ssl.sendmail(SENDER_EMAIL, RECEIVER_EMAIL, email_text)
-    server_ssl.close()
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    connection = smtplib.SMTP('smtp-mail.outlook.com', 587)
+    connection.ehlo()
+    connection.starttls(context=context)
+    connection.ehlo()
+    connection.login(SENDER_EMAIL, SENDER_PASSWORD)
+    connection.sendmail(SENDER_EMAIL, RECEIVER_EMAIL, email_text)
+    connection.close()
 
   except:
       print('Something went wrong...')
@@ -93,7 +97,7 @@ if __name__ == "__main__":
   print("Send the results over email")
   body = json.dumps(videos_data, indent=2)
   print(body)
-  #send_email(body)
+  send_email(body)
 
   print('Finished.')
 
